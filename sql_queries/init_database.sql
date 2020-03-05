@@ -1,0 +1,1 @@
+CREATE DATABASE {dbname} ENCODING 'UTF-8';
