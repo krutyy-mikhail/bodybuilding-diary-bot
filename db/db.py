@@ -7,7 +7,7 @@ from psycopg2.extras import RealDictCursor
 from psycopg2 import OperationalError
 
 import config
-from exceptions import ConnectDBError
+from db.exceptions import ConnectDBError
 
 SUPER_DBNAME = 'postgres'
 SUPER_DBUSER = 'postgres'

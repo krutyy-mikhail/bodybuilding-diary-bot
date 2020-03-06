@@ -2,15 +2,17 @@ from telebot import TeleBot
 from telebot import apihelper
 
 import config
+import environment as env
 from models import models
 from models import exceptions
+from bot.utils import get_data_from_food_report
 
 
 apihelper.proxy = config.PROXY
 bot = TeleBot(config.TELEGRAM_TOKEN)
 
 
-# Handling start
+# Handling start.
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
@@ -18,19 +20,25 @@ def handle_start(message):
     bot.send_message(chat_id=message.chat.id, text=text)
 
 
-# Handling registration
+# Handling registration.
 
 @bot.message_handler(commands=['registration'])
 def handle_registration(message):
-    customer = models.Customer(id=message.chat.id)
-    text = 'Введите, пожалуйста Ваше имя:'
-    bot.send_message(chat_id=message.chat.id, text=text)
-    bot.register_next_step_handler(message, handle_first_name, customer)
+    user = env.service_user.get(message.chat.id)
+
+    if not user:
+        user = models.User(id=message.chat.id)
+        text = 'Введите, пожалуйста Ваше имя:'
+        bot.send_message(chat_id=message.chat.id, text=text)
+        bot.register_next_step_handler(message, handle_first_name, user)
+    else:
+        text = 'Вы уже зарегистрированы.'
+        bot.send_message(chat_id=message.chat.id, text=text)
 
 
-def handle_first_name(message, customer):
+def handle_first_name(message, user):
     try:
-        customer.first_name = message.text
+        user.first_name = message.text
     except TypeError as e:
         text = str(e)
     except exceptions.FieldIsTooLong as e:
@@ -40,17 +48,17 @@ def handle_first_name(message, customer):
     else:
         text = 'Введите, пожалуйста Вашу фамилию:'
         bot.send_message(chat_id=message.chat.id, text=text)
-        bot.register_next_step_handler(message, handle_last_name, customer)
+        bot.register_next_step_handler(message, handle_last_name, user)
 
         return
 
     bot.send_message(chat_id=message.chat.id, text=text)
-    bot.register_next_step_handler(message, handle_first_name, customer)
+    bot.register_next_step_handler(message, handle_first_name, user)
 
 
-def handle_last_name(message, customer):
+def handle_last_name(message, user):
     try:
-        customer.last_name = message.text
+        user.last_name = message.text
     except TypeError as e:
         text = str(e)
     except exceptions.FieldIsTooLong as e:
@@ -60,17 +68,17 @@ def handle_last_name(message, customer):
     else:
         text = 'Введите, пожалуйста Ваш телефон:'
         bot.send_message(chat_id=message.chat.id, text=text)
-        bot.register_next_step_handler(message, handle_phone, customer)
+        bot.register_next_step_handler(message, handle_phone, user)
 
         return
 
     bot.send_message(chat_id=message.chat.id, text=text)
-    bot.register_next_step_handler(message, handle_last_name, customer)
+    bot.register_next_step_handler(message, handle_last_name, user)
 
 
-def handle_phone(message, customer):
+def handle_phone(message, user):
     try:
-        customer.phone = message.text
+        user.phone = message.text
     except TypeError as e:
         text = str(e)
     except exceptions.FieldIsTooLong as e:
@@ -80,17 +88,17 @@ def handle_phone(message, customer):
     else:
         text = 'Введите, пожалуйста Вашу электронную почту:'
         bot.send_message(chat_id=message.chat.id, text=text)
-        bot.register_next_step_handler(message, handle_email, customer)
+        bot.register_next_step_handler(message, handle_email, user)
 
         return
 
     bot.send_message(chat_id=message.chat.id, text=text)
-    bot.register_next_step_handler(message, handle_phone, customer)
+    bot.register_next_step_handler(message, handle_phone, user)
 
 
-def handle_email(message, customer):
+def handle_email(message, user):
     try:
-        customer.email = message.text
+        user.email = message.text
     except TypeError as e:
         text = str(e)
     except exceptions.FieldIsTooLong as e:
@@ -98,11 +106,27 @@ def handle_email(message, customer):
     except exceptions.FieldNotMatchPattern as e:
         text = str(e)
     else:
-        customer.create()
+        env.service_user.create(user)
         text = 'Данные успешно сохранены.'
         bot.send_message(chat_id=message.chat.id, text=text)
 
         return
 
     bot.send_message(chat_id=message.chat.id, text=text)
-    bot.register_next_step_handler(message, handle_email, customer)
+    bot.register_next_step_handler(message, handle_email, user)
+
+
+# Handling food report.
+
+# @bot.message_handler(commands=['sendfoodreport'])
+# def handle_sending_report(message):
+#     text = 'Прикрепите, пожалуйста, pdf-файл с ежедневным отчетом о питании.'
+#     bot.send_message(chat_id=message.chat.id, text=text)
+#     bot.register_next_step_handler(message, handle_food_report)
+
+
+# def handle_food_report(message): 
+#     nutriens = get_data_from_food_report()
+#     food_report = models.FoodReport(**nutriens)
+
+#     bot.send_message(chat_id=message.chat.id, text=text)

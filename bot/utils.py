@@ -10,7 +10,7 @@ def to_float(string):
         return float(string)
 
 
-def get_total_from_report(path):
+def get_data_from_food_report(path):
     nutrients = defaultdict(None)
     error_pdf = 'Incorrect pdf-file.'
 

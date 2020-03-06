@@ -28,28 +28,24 @@ class Model:
                     attribute))
 
 
-class Customer(Model):
+class User(Model):
     first_name = fields.CharField(max_length=100)
     last_name = fields.CharField(max_length=100)
     phone = fields.PhoneField(max_length=50, is_blank=True)
     email = fields.EmailField(max_length=50, is_blank=True)
     is_admin = fields.BoleanField(is_blank=True)
 
-    def create(self):
-        cusutomer_dao = dao.CustomerDAO()
-        cusutomer_dao.create(self)
 
-
-class ReportFood(Model):
+class FoodReport(Model):
     fats = fields.PositiveFloatField()
     carbohydrates = fields.PositiveFloatField()
     calories = fields.PositiveFloatField()
     cellulose = fields.PositiveFloatField()
     date_report = fields.DateTimeField(is_blank=True)
-    customer_id = fields.IdField()
+    user_id = fields.IdField()
 
 
-class ReportSizesBody(Model):
+class BodyReport(Model):
     weight = fields.PositiveFloatField()
     size_waist = fields.PositiveFloatField()
     size_chest = fields.PositiveFloatField()
@@ -59,7 +55,7 @@ class ReportSizesBody(Model):
     size_pelvis = fields.PositiveFloatField()
     size_buttocks = fields.PositiveFloatField()
     date_report = fields.DateTimeField(is_blank=True)
-    customer_id = fields.IdField()
+    user_id = fields.IdField()
 
 
 class NormalFood(Model):
@@ -67,4 +63,4 @@ class NormalFood(Model):
     normal_carbohydrates = fields.PositiveFloatField()
     normal_calories = fields.PositiveFloatField()
     normal_cellulose = fields.PositiveFloatField()
-    customer_id = fields.IdField()
+    user_id = fields.IdField()

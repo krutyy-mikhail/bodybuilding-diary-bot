@@ -1,7 +1,7 @@
 from psycopg2 import sql
 
 from models import models
-from db import ConnectorDB
+from db.db import ConnectorDB
 
 
 class AbstractDAO:
@@ -69,22 +69,20 @@ class AbstractDAO:
             cursor.execute(query, vars(obj))
 
 
-class CustomerDAO(AbstractDAO):
-    def get_customer_by_id(self, customer_id):
+class UserDAO(AbstractDAO):
+    def get_user_by_id(self, user_id):
         with self.connector as cursor:
-            connection, cursor = self._get_connection()
-            cursor.execute('SELECT * FROM customer WHERE id = %s',
-                           (customer_id,))
-            customer = cursor.fetchone()
-
-            return models.Customer(*customer)
+            cursor.execute('SELECT * FROM "user" WHERE id = %s',
+                           (user_id,))
+            user = cursor.fetchone()
+            return models.User(**user)
 
 
-class ReportFoodDAO(AbstractDAO):
+class FoodReportDAO(AbstractDAO):
     pass
 
 
-class ReportSizesBodyDAO(AbstractDAO):
+class BodyReportDAO(AbstractDAO):
     pass
 
 

@@ -16,7 +16,3 @@ class FieldIsTooLong(BaseValidationFieldError):
 
 class FieldNotMatchPattern(BaseValidationFieldError):
     pass
-
-
-class FieldIsSmile(BaseValidationFieldError):
-    pass

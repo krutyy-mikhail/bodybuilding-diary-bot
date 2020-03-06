@@ -1,6 +1,6 @@
 # Settings DB
 
-DBNAME = 'bodybilding_diary'
+DBNAME = 'bodybuilding_diary'
 DBUSER = 'bbd'
 DBPASSWORD = '33hfpfASD'
 DBHOST = '127.0.0.1'
