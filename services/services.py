@@ -12,8 +12,9 @@ class AbstractService:
     def dao(self, value):
         class_ = type(self.dao)
         if not isinstance(value, class_):
-            raise TypeError('Attribute "dao" must be object type of "{}".'.format(
-                class_.__name__))
+            error = 'Attribute "dao" must be object type of "{}".'.format(
+                class_.__name__)
+            raise TypeError(error)
         self._dao = value
 
 
@@ -24,7 +25,7 @@ class UserService(AbstractService):
         self.dao.create(user)
 
     def get(self, user_id):
-        return self.dao.get_user_by_id(user_id)
+        return self.dao.get_by_id(user_id)
 
 
 class FoodReportService(AbstractService):

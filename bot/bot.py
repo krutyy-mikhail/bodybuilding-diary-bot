@@ -25,7 +25,6 @@ def handle_start(message):
 @bot.message_handler(commands=['registration'])
 def handle_registration(message):
     user = env.user_service.get(message.chat.id)
-
     if not user:
         user = models.User(id=message.chat.id)
         text = 'Введите, пожалуйста Ваше имя:'
@@ -114,19 +113,3 @@ def handle_email(message, user):
 
     bot.send_message(chat_id=message.chat.id, text=text)
     bot.register_next_step_handler(message, handle_email, user)
-
-
-# Handling food report.
-
-# @bot.message_handler(commands=['sendfoodreport'])
-# def handle_sending_report(message):
-#     text = 'Прикрепите, пожалуйста, pdf-файл с ежедневным отчетом о питании.'
-#     bot.send_message(chat_id=message.chat.id, text=text)
-#     bot.register_next_step_handler(message, handle_food_report)
-
-
-# def handle_food_report(message): 
-#     nutriens = get_data_from_food_report()
-#     food_report = models.FoodReport(**nutriens)
-
-#     bot.send_message(chat_id=message.chat.id, text=text)

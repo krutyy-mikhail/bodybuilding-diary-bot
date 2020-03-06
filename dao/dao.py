@@ -5,7 +5,21 @@ from db.db import ConnectorDB
 
 
 class AbstractDAO:
-    connector = ConnectorDB()
+    _connector = ConnectorDB()
+
+    @property
+    def connector(self):
+        return self._connector
+
+    @connector.setter
+    def connector(self, value):
+        class_ = type(self._connector)
+
+        if not isinstance(value, class_):
+            error = 'Attribute "connector" must be object type of "{}".'.format(
+                class_.__name__)
+            raise TypeError(error)
+        self._connector = value
 
     def _get_name_table(self):
         name_table = ''
@@ -68,14 +82,21 @@ class AbstractDAO:
                 sql.Placeholder(names_fields[0]))
             cursor.execute(query, vars(obj))
 
+    def get_by_id(self, obj_id):
+        with self.connector as cursor:
+            name_table = self._get_name_table()
+
+            query = sql.SQL('SELECT * FROM {} WHERE id = {}').format(
+                sql.Identifier(name_table),
+                sql.Placeholder())
+
+            cursor.execute(query, (obj_id,))
+            user = cursor.fetchone()
+            return vars(models)[name_table.capitalize()](**user)
+
 
 class UserDAO(AbstractDAO):
-    def get_user_by_id(self, user_id):
-        with self.connector as cursor:
-            cursor.execute('SELECT * FROM "user" WHERE id = %s',
-                           (user_id,))
-            user = cursor.fetchone()
-            return models.User(**user)
+    pass
 
 
 class FoodReportDAO(AbstractDAO):
