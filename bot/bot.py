@@ -24,7 +24,7 @@ def handle_start(message):
 
 @bot.message_handler(commands=['registration'])
 def handle_registration(message):
-    user = env.service_user.get(message.chat.id)
+    user = env.user_service.get(message.chat.id)
 
     if not user:
         user = models.User(id=message.chat.id)
@@ -106,7 +106,7 @@ def handle_email(message, user):
     except exceptions.FieldNotMatchPattern as e:
         text = str(e)
     else:
-        env.service_user.create(user)
+        env.user_service.create(user)
         text = 'Данные успешно сохранены.'
         bot.send_message(chat_id=message.chat.id, text=text)
 
